@@ -91,13 +91,13 @@ SLACK_APP_TOKEN=xapp-your-app-token
 
 ```typescript
 // src/index.ts
-console.log("claude-mobile bot starting...");
+console.log("slack-claude-bot bot starting...");
 ```
 
 **Step 8: Verify it runs**
 
 Run: `npm run dev`
-Expected: Prints "claude-mobile bot starting..."
+Expected: Prints "slack-claude-bot bot starting..."
 
 **Step 9: Commit**
 
@@ -530,7 +530,7 @@ function required(name: string): string {
 export const config = {
   slackBotToken: required("SLACK_BOT_TOKEN"),
   slackAppToken: required("SLACK_APP_TOKEN"),
-  dbPath: process.env.DB_PATH ?? "claude-mobile.db",
+  dbPath: process.env.DB_PATH ?? "slack-claude-bot.db",
 };
 ```
 
@@ -849,7 +849,7 @@ const app = createApp(sessionManager);
 
 (async () => {
   await app.start();
-  console.log("claude-mobile bot is running");
+  console.log("slack-claude-bot bot is running");
 })();
 ```
 
@@ -958,12 +958,12 @@ git commit -m "docs: add Slack app setup guide"
 **Step 2: Start the bot**
 
 Run: `npm run dev`
-Expected: Prints "claude-mobile bot is running"
+Expected: Prints "slack-claude-bot bot is running"
 
 **Step 3: Test new session**
 
 1. Invite bot to a channel
-2. Send: `@Claude Code Bot `~/ted/claude-mobile` list the files in this project`
+2. Send: `@Claude Code Bot `~/ted/slack-claude-bot` list the files in this project`
 3. Verify: "Working..." appears, updates with progress, final result posted
 
 **Step 4: Test session continuity**
@@ -973,7 +973,7 @@ Expected: Prints "claude-mobile bot is running"
 
 **Step 5: Test tool approval**
 
-1. New thread: `@Claude Code Bot `~/ted/claude-mobile` create a file called test.txt with "hello"`
+1. New thread: `@Claude Code Bot `~/ted/slack-claude-bot` create a file called test.txt with "hello"`
 2. Verify: Approve/Deny buttons appear
 3. Tap "Approve"
 4. Verify: File created, button message updated to "Approved"

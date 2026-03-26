@@ -11,5 +11,5 @@ const app = createApp(sessionManager);
 
 (async () => {
   await app.start();
-  console.log("claude-mobile bot is running");
+  console.log("slack-claude-bot is running");
 })();

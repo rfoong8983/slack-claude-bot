@@ -20,8 +20,7 @@ export function createApp(sessionManager: SessionManager): App {
   const queue = new MessageQueue();
   const pendingApprovals = new Map<string, ToolApprovalRequest>();
 
-  // Listen for messages in DMs that @mention the bot.
-  // app_mention doesn't fire in self-DMs, so we use message events instead.
+  // Listen for DM messages from the allowed user.
   app.event("message", async ({ event, client }) => {
     const msg = event as any;
 
@@ -33,10 +32,6 @@ export function createApp(sessionManager: SessionManager): App {
 
     // Ignore subtypes (edits, bot messages, etc.)
     if (msg.subtype) return;
-
-    // Only respond when the bot is @mentioned
-    const botMentionRegex = /<@[A-Z0-9]+>/;
-    if (!botMentionRegex.test(msg.text ?? "")) return;
 
     const threadTs = msg.thread_ts ?? msg.ts;
     const channelId = msg.channel;

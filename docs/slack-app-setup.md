@@ -57,10 +57,11 @@ npm run dev
 
 ## Usage
 
-In your private DM with yourself, @mention the bot:
+Open a DM with @claudebot and send a message:
 
-- Start a session: `@claudebot `~/path/to/project` fix the login bug`
-- Continue in thread: `@claudebot now add tests for it`
+- Start a session: `` `~/path/to/project` fix the login bug``
+- Continue in thread: reply with `now add tests for it`
 - Tool approvals appear as Approve/Deny buttons in the thread
+- Each top-level message starts a new session; reply in-thread to continue
 
-The bot only responds to @mentions from the configured `ALLOWED_USER_ID` in IM channels.
+The bot only responds to the configured `ALLOWED_USER_ID`.

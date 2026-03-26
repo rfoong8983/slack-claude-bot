@@ -17,6 +17,10 @@ export function createApp(sessionManager: SessionManager): App {
     socketMode: true,
   });
 
+  app.error(async (error) => {
+    console.error(`[slack] unhandled error: ${error.message}`);
+  });
+
   const queue = new MessageQueue();
   const pendingApprovals = new Map<string, ToolApprovalRequest>();
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-A local TypeScript/Node.js app that connects to Slack via Socket Mode and proxies messages to a local Claude Code instance using the `@anthropic-ai/claude-code` SDK. Allows remote control of Claude Code from any device (phone, tablet, etc.) via Slack DMs or channels.
+A local TypeScript/Node.js app that connects to Slack via Socket Mode and proxies messages to a local Claude Code instance using the `@anthropic-ai/claude-agent-sdk` SDK. Allows remote control of Claude Code from any device (phone, tablet, etc.) via Slack DMs or channels.
 
 ## Architecture
 
@@ -10,7 +10,7 @@ Three main components:
 
 1. **Slack Adapter** — Connects via Socket Mode, listens for `app_mention` events, handles button interactions, posts messages/updates to threads.
 2. **Session Manager** — Maps Slack thread IDs to Claude Code session IDs + working directory. Backed by SQLite.
-3. **Claude Code Bridge** — Wraps `@anthropic-ai/claude-code` SDK. Manages invoking Claude, streaming progress, and pausing execution for tool approvals.
+3. **Claude Code Bridge** — Wraps `@anthropic-ai/claude-agent-sdk` SDK. Manages invoking Claude, streaming progress, and pausing execution for tool approvals.
 
 ```
 Slack (any device)
@@ -23,7 +23,7 @@ Slack Adapter (@slack/bolt)
   +-- Button click --> Claude Code Bridge (resolve pending approval)
         |
         v
-Claude Code Bridge (@anthropic-ai/claude-code SDK)
+Claude Code Bridge (@anthropic-ai/claude-agent-sdk SDK)
   |
   +-- onToolUse --> post approval buttons to Slack thread, wait for click
   +-- streaming progress --> update "working..." message in thread
@@ -138,5 +138,5 @@ CREATE TABLE sessions (
 
 - **Runtime:** Node.js + TypeScript
 - **Slack:** `@slack/bolt` (handles Socket Mode + interactivity + events)
-- **Claude Code:** `@anthropic-ai/claude-code` SDK
+- **Claude Code:** `@anthropic-ai/claude-agent-sdk` SDK
 - **Database:** `better-sqlite3` (synchronous, no async overhead, local use)

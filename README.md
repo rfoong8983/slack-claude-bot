@@ -61,26 +61,26 @@ npm run dev
 
 ### Running with the Lid Closed
 
-To keep the bot running while the Mac lid is closed and the screen is locked, use `caffeinate` to prevent sleep:
+To keep the bot running with the Mac lid closed, you need the Mac to stay awake and connected to WiFi. This requires a power adapter and Amphetamine (free on the Mac App Store).
 
-```bash
-caffeinate -s npm run dev
-```
+#### Setup
 
-The `-s` flag prevents the system from sleeping even when on battery power and the lid is closed. The process will stay alive until you kill it (Ctrl+C or `kill`), and `caffeinate` automatically stops when the bot exits.
+1. Install Amphetamine from the Mac App Store
+2. If on Apple Silicon, install Amphetamine Power Protect to handle power adapter disconnect/reconnect
+3. Open Amphetamine Preferences > Session Defaults > Closed-Display Mode
+   a. **Uncheck** "Closed-Display Mode: Allow system sleep when display is closed"
 
-To lock the screen before closing the lid, press `Ctrl+Cmd+Q`.
+#### Running
 
-macOS may drop WiFi when the lid closes, causing the Slack WebSocket to disconnect. To prevent this, configure power management to keep the network alive:
+1. Plug in your power adapter
+2. Start the bot: `npm run dev`
+3. Start an Amphetamine session (menu bar icon > "Start New Session" > "Indefinitely")
+4. Lock the screen: `Ctrl+Cmd+Q`
+5. Close the lid
 
-```bash
-sudo pmset -a tcpkeepalive 1
-sudo pmset -a sleep 0
-sudo pmset -a disksleep 0
-sudo pmset -a powernap 0
-```
+The Mac stays awake with WiFi active, the screen is locked, and the bot keeps running. When you open the lid, you'll need your password/Touch ID to unlock.
 
-These only need to be run once — the settings persist across reboots. To verify: `pmset -g`.
+**Note:** This does not work on battery — macOS will sleep when the lid closes without power connected.
 
 ## Usage
 

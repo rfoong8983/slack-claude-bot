@@ -6,7 +6,7 @@ import { config } from "./config.js";
 import { randomUUID } from "crypto";
 import { existsSync } from "fs";
 
-const WORKING_DIR_REGEX = /`(~\/[^`]+|\/[^`]+)`/;
+const REPO_REGEX = /repo:(\S+)/;
 const SLACK_MSG_LIMIT = 4000;
 const PROGRESS_THROTTLE_MS = 1500;
 
@@ -42,27 +42,28 @@ export function createApp(sessionManager: SessionManager): App {
       : undefined;
 
     if (!existingSession) {
-      const match = userText.match(WORKING_DIR_REGEX);
+      const match = userText.match(REPO_REGEX);
       if (!match) {
         await client.chat.postMessage({
           channel: channelId,
           thread_ts: threadTs,
-          text: "Please specify a working directory in backticks, e.g. `~/ted/ems`",
+          text: "Please specify a repo, e.g. `repo:ems fix the login bug`",
         });
         return;
       }
 
-      const dir = match[1].replace(/^~/, process.env.HOME ?? "~");
+      const repoName = match[1];
+      const dir = `${process.env.HOME ?? "~"}/ted/${repoName}`;
       if (!existsSync(dir)) {
         await client.chat.postMessage({
           channel: channelId,
           thread_ts: threadTs,
-          text: `Directory not found: \`${dir}\``,
+          text: `Repo not found: \`~/ted/${repoName}\``,
         });
         return;
       }
 
-      const prompt = userText.replace(WORKING_DIR_REGEX, "").trim();
+      const prompt = userText.replace(REPO_REGEX, "").trim();
       if (!prompt) {
         await client.chat.postMessage({
           channel: channelId,

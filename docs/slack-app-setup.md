@@ -59,7 +59,7 @@ npm run dev
 
 Open a DM with @claudebot and send a message:
 
-- Start a session: `` `~/path/to/project` fix the login bug``
+- Start a session: `repo:ems fix the login bug`
 - Continue in thread: reply with `now add tests for it`
 - Tool approvals appear as Approve/Deny buttons in the thread
 - Each top-level message starts a new session; reply in-thread to continue

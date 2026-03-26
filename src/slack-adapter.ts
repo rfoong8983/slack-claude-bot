@@ -6,7 +6,7 @@ import { config } from "./config.js";
 import { randomUUID } from "crypto";
 import { existsSync } from "fs";
 
-const REPO_REGEX = /repo:(\S+)/;
+const REPO_REGEX = /repo:(\S+)/i;
 const SLACK_MSG_LIMIT = 4000;
 const PROGRESS_THROTTLE_MS = 1500;
 

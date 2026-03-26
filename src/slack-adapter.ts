@@ -20,12 +20,29 @@ export function createApp(sessionManager: SessionManager): App {
   const queue = new MessageQueue();
   const pendingApprovals = new Map<string, ToolApprovalRequest>();
 
-  app.event("app_mention", async ({ event, client }) => {
-    const threadTs = event.thread_ts ?? event.ts;
-    const channelId = event.channel;
-    const userText = event.text.replace(/<@[A-Z0-9]+>/g, "").trim();
+  // Listen for messages in DMs that @mention the bot.
+  // app_mention doesn't fire in self-DMs, so we use message events instead.
+  app.event("message", async ({ event, client }) => {
+    const msg = event as any;
 
-    const existingSession = event.thread_ts
+    // Only respond in IM (DM) channels
+    if (msg.channel_type !== "im") return;
+
+    // Only respond to the allowed user
+    if (msg.user !== config.allowedUserId) return;
+
+    // Ignore subtypes (edits, bot messages, etc.)
+    if (msg.subtype) return;
+
+    // Only respond when the bot is @mentioned
+    const botMentionRegex = /<@[A-Z0-9]+>/;
+    if (!botMentionRegex.test(msg.text ?? "")) return;
+
+    const threadTs = msg.thread_ts ?? msg.ts;
+    const channelId = msg.channel;
+    const userText = (msg.text ?? "").replace(/<@[A-Z0-9]+>/g, "").trim();
+
+    const existingSession = msg.thread_ts
       ? sessionManager.getSession(threadTs)
       : undefined;
 

@@ -17,10 +17,7 @@
 
 1. Go to "OAuth & Permissions"
 2. Under "Bot Token Scopes", add:
-   - `app_mentions:read`
    - `chat:write`
-   - `channels:history`
-   - `groups:history`
    - `im:history`
 3. Install the app to your workspace
 4. Copy the `xoxb-...` token — this is your `SLACK_BOT_TOKEN`
@@ -30,7 +27,7 @@
 1. Go to "Event Subscriptions"
 2. Toggle "Enable Events" ON
 3. Under "Subscribe to bot events", add:
-   - `app_mention`
+   - `message.im`
 
 ## 5. Enable Interactivity
 
@@ -40,12 +37,15 @@
 
 ## 6. Configure Environment
 
-Copy `.env.example` to `.env` and fill in the tokens:
+Copy `.env.example` to `.env` and fill in the values:
 
 ```
 SLACK_BOT_TOKEN=xoxb-your-bot-token
 SLACK_APP_TOKEN=xapp-your-app-token
+ALLOWED_USER_ID=U-your-slack-user-id
 ```
+
+To find your Slack user ID: click your profile picture > "Profile" > click the three dots > "Copy member ID".
 
 Ensure your AWS credentials are configured (via env vars, `~/.aws/credentials`, or AWS profile) for Bedrock access.
 
@@ -57,8 +57,10 @@ npm run dev
 
 ## Usage
 
-In any channel where the bot is invited (or in a DM):
+In your private DM with yourself, @mention the bot:
 
 - Start a session: `@Claude Code Bot `~/path/to/project` fix the login bug`
 - Continue in thread: `@Claude Code Bot now add tests for it`
 - Tool approvals appear as Approve/Deny buttons in the thread
+
+The bot only responds to @mentions from the configured `ALLOWED_USER_ID` in IM channels.

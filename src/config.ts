@@ -9,5 +9,6 @@ function required(name: string): string {
 export const config = {
   slackBotToken: required("SLACK_BOT_TOKEN"),
   slackAppToken: required("SLACK_APP_TOKEN"),
+  allowedUserId: required("ALLOWED_USER_ID"),
   dbPath: process.env.DB_PATH ?? "claude-mobile.db",
 };

@@ -1,0 +1,13 @@
+import "dotenv/config";
+
+function required(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing required env var: ${name}`);
+  return value;
+}
+
+export const config = {
+  slackBotToken: required("SLACK_BOT_TOKEN"),
+  slackAppToken: required("SLACK_APP_TOKEN"),
+  dbPath: process.env.DB_PATH ?? "claude-mobile.db",
+};

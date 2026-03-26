@@ -1,5 +1,5 @@
 {
-  "name": "claude-mobile",
+  "name": "slack-claude-bot",
   "version": "1.0.0",
   "description": "Slack bot that proxies messages to Claude Code via the agent SDK",
   "type": "module",

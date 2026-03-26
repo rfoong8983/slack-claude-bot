@@ -28,7 +28,10 @@ export function createApp(sessionManager: SessionManager): App {
     if (msg.channel_type !== "im") return;
 
     // Only respond to the allowed user
-    if (msg.user !== config.allowedUserId) return;
+    if (msg.user !== config.allowedUserId) {
+      console.log(`[msg] ignored message from user=${msg.user} (not allowed)`);
+      return;
+    }
 
     // Ignore subtypes (edits, bot messages, etc.)
     if (msg.subtype) return;
@@ -36,6 +39,8 @@ export function createApp(sessionManager: SessionManager): App {
     const threadTs = msg.thread_ts ?? msg.ts;
     const channelId = msg.channel;
     const userText = (msg.text ?? "").replace(/<@[A-Z0-9]+>/g, "").trim();
+
+    console.log(`[msg] received thread=${threadTs} text="${userText.slice(0, 80)}"`);
 
     const existingSession = msg.thread_ts
       ? sessionManager.getSession(threadTs)
@@ -55,6 +60,7 @@ export function createApp(sessionManager: SessionManager): App {
       const repoName = match[1];
       const dir = `${process.env.HOME ?? "~"}/ted/${repoName}`;
       if (!existsSync(dir)) {
+        console.log(`[msg] repo not found: ${dir}`);
         await client.chat.postMessage({
           channel: channelId,
           thread_ts: threadTs,
@@ -74,6 +80,7 @@ export function createApp(sessionManager: SessionManager): App {
       }
 
       const placeholderId = randomUUID();
+      console.log(`[session] new session thread=${threadTs} repo=${repoName} cwd=${dir}`);
       sessionManager.createSession({
         threadId: threadTs,
         channelId,
@@ -89,6 +96,7 @@ export function createApp(sessionManager: SessionManager): App {
         resumeSessionId: undefined,
       });
     } else {
+      console.log(`[session] resuming thread=${threadTs} sessionId=${existingSession.sessionId}`);
       sessionManager.touchSession(threadTs);
       enqueuePrompt(queue, client, sessionManager, pendingApprovals, {
         channelId,
@@ -108,6 +116,7 @@ export function createApp(sessionManager: SessionManager): App {
     const toolUseId = actionId.replace(/^(approve|deny)_/, "");
 
     const request = pendingApprovals.get(toolUseId);
+    console.log(`[approval] ${approved ? "approved" : "denied"} tool=${request?.toolName ?? "unknown"} toolUseId=${toolUseId}`);
     if (request) {
       request.resolve(approved);
       pendingApprovals.delete(toolUseId);
@@ -140,9 +149,11 @@ function enqueuePrompt(
     resumeSessionId: string | undefined;
   }
 ): void {
+  console.log(`[queue] enqueuing thread=${opts.threadTs} cwd=${opts.cwd} resume=${opts.resumeSessionId ?? "none"}`);
   queue.enqueue(
     opts.threadTs,
     async () => {
+      console.log(`[claude] starting query thread=${opts.threadTs} prompt="${opts.prompt.slice(0, 80)}"`);
       const statusMsg = await client.chat.postMessage({
         channel: opts.channelId,
         thread_ts: opts.threadTs,
@@ -160,6 +171,7 @@ function enqueuePrompt(
             const now = Date.now();
             if (now - lastProgressUpdate < PROGRESS_THROTTLE_MS) return;
             lastProgressUpdate = now;
+            console.log(`[claude] progress thread=${opts.threadTs} tool=${toolName}`);
 
             client.chat.update({
               channel: opts.channelId,
@@ -169,6 +181,7 @@ function enqueuePrompt(
           },
 
           onResult: (text: string) => {
+            console.log(`[claude] result thread=${opts.threadTs} length=${text.length}`);
             client.chat.update({
               channel: opts.channelId,
               ts: statusTs,
@@ -186,6 +199,7 @@ function enqueuePrompt(
           },
 
           onError: (error: Error) => {
+            console.error(`[claude] error thread=${opts.threadTs} error="${error.message}"`);
             client.chat.update({
               channel: opts.channelId,
               ts: statusTs,
@@ -194,6 +208,7 @@ function enqueuePrompt(
           },
 
           onToolApproval: (request: ToolApprovalRequest) => {
+            console.log(`[claude] tool approval requested thread=${opts.threadTs} tool=${request.toolName}`);
             pendingApprovals.set(request.toolUseId, request);
 
             const inputPreview = JSON.stringify(request.toolInput, null, 2);
@@ -238,10 +253,13 @@ function enqueuePrompt(
       });
 
       if (!opts.resumeSessionId && newSessionId) {
+        console.log(`[session] updated sessionId thread=${opts.threadTs} sessionId=${newSessionId}`);
         sessionManager.updateSessionId(opts.threadTs, newSessionId);
       }
+      console.log(`[claude] query complete thread=${opts.threadTs}`);
     },
     (err) => {
+      console.error(`[queue] error thread=${opts.threadTs} error="${err.message}"`);
       client.chat.postMessage({
         channel: opts.channelId,
         thread_ts: opts.threadTs,

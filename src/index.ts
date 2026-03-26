@@ -12,4 +12,8 @@ const app = createApp(sessionManager);
 (async () => {
   await app.start();
   console.log("slack-claude-bot is running");
+  console.log(`  CLAUDE_CODE_USE_BEDROCK=${process.env.CLAUDE_CODE_USE_BEDROCK ?? "unset"}`);
+  console.log(`  AWS_REGION=${process.env.AWS_REGION ?? "unset"}`);
+  console.log(`  AWS_PROFILE=${process.env.AWS_PROFILE ?? "unset"}`);
+  console.log(`  DB_PATH=${config.dbPath}`);
 })();

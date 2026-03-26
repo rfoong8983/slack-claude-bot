@@ -4,7 +4,7 @@
 
 1. Go to https://api.slack.com/apps
 2. Click "Create New App" > "From scratch"
-3. Name it (e.g., "Claude Code Bot") and select your workspace
+3. Name it "claudebot" and select your workspace
 
 ## 2. Enable Socket Mode
 
@@ -59,8 +59,8 @@ npm run dev
 
 In your private DM with yourself, @mention the bot:
 
-- Start a session: `@Claude Code Bot `~/path/to/project` fix the login bug`
-- Continue in thread: `@Claude Code Bot now add tests for it`
+- Start a session: `@claudebot `~/path/to/project` fix the login bug`
+- Continue in thread: `@claudebot now add tests for it`
 - Tool approvals appear as Approve/Deny buttons in the thread
 
 The bot only responds to @mentions from the configured `ALLOWED_USER_ID` in IM channels.

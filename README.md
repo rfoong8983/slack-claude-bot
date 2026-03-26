@@ -71,6 +71,14 @@ The `-s` flag prevents the system from sleeping even when on battery power and t
 
 To lock the screen before closing the lid, press `Ctrl+Cmd+Q`.
 
+macOS may still drop WiFi briefly when the lid closes, causing the Slack WebSocket to disconnect and reconnect. To keep network connections alive during display sleep:
+
+```bash
+sudo pmset -a tcpkeepalive 1
+```
+
+This only needs to be run once — the setting persists across reboots.
+
 ## Usage
 
 Open a DM with @claudebot and send a message:

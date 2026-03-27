@@ -62,4 +62,29 @@ describe("SessionManager", () => {
     const session = manager.getSession("thread_123");
     expect(session!.sessionId).toBe("real_session_id");
   });
+
+  it("returns the most recent last_active_at", () => {
+    manager.createSession({
+      threadId: "thread_1",
+      channelId: "C1",
+      sessionId: "s1",
+      workingDirectory: "/tmp/a",
+    });
+    manager.createSession({
+      threadId: "thread_2",
+      channelId: "C2",
+      sessionId: "s2",
+      workingDirectory: "/tmp/b",
+    });
+    manager.touchSession("thread_2");
+
+    const lastActive = manager.getLastActiveAt();
+    expect(lastActive).toBeDefined();
+    expect(typeof lastActive).toBe("string");
+  });
+
+  it("returns undefined when no sessions exist", () => {
+    const lastActive = manager.getLastActiveAt();
+    expect(lastActive).toBeUndefined();
+  });
 });

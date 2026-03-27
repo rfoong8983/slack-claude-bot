@@ -70,4 +70,11 @@ export class SessionManager {
       .prepare("UPDATE sessions SET session_id = ? WHERE thread_id = ?")
       .run(sessionId, threadId);
   }
+
+  getLastActiveAt(): string | undefined {
+    const row = this.db
+      .prepare("SELECT MAX(last_active_at) as last_active FROM sessions")
+      .get() as any;
+    return row?.last_active ?? undefined;
+  }
 }

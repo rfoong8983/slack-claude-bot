@@ -23,6 +23,7 @@ A Slack bot that runs Claude Code sessions via DM. Each thread maps to a Claude 
 2. Under "Bot Token Scopes", add:
    - `chat:write`
    - `im:history`
+   - `im:write`
    - `pins:read`
    - `pins:write`
 3. Install the app to your workspace

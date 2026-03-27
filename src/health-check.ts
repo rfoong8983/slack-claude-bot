@@ -80,12 +80,17 @@ export async function startHealthCheck(
   sessionManager: SessionManager
 ): Promise<() => Promise<void>> {
   // Open DM channel with allowed user
-  const openResult = await client.conversations.open({
-    users: config.allowedUserId,
-  });
-  const channel = openResult.channel?.id;
+  let channel: string | undefined;
+  try {
+    const openResult = await client.conversations.open({
+      users: config.allowedUserId,
+    });
+    channel = openResult.channel?.id;
+  } catch (err: any) {
+    console.error(`[health] failed to open DM channel: ${err.message}`);
+  }
   if (!channel) {
-    console.error("[health] could not open DM channel");
+    console.error("[health] could not open DM channel — health check disabled");
     return async () => {};
   }
   console.log(`[health] DM channel=${channel}`);

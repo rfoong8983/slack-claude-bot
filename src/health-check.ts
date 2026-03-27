@@ -32,7 +32,11 @@ export function buildHealthBlocks(sessionManager: SessionManager, online: boolea
   const lastActiveIso = sessionManager.getLastActiveAt();
   let lastActivityLine: string;
   if (lastActiveIso) {
-    const lastActiveSec = Math.floor(new Date(lastActiveIso).getTime() / 1000);
+    // SQLite CURRENT_TIMESTAMP lacks timezone suffix — ensure UTC parsing
+    const normalized = lastActiveIso.endsWith("Z") || lastActiveIso.includes("+")
+      ? lastActiveIso
+      : lastActiveIso.replace(" ", "T") + "Z";
+    const lastActiveSec = Math.floor(new Date(normalized).getTime() / 1000);
     lastActivityLine = `*Last activity:* ${slackDate(lastActiveSec, "{date_short_pretty} at {time}", lastActiveIso)}`;
   } else {
     lastActivityLine = "*Last activity:* No sessions yet";

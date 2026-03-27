@@ -200,6 +200,7 @@ describe("startHealthCheck", () => {
   });
 
   it("creates new pin when none exists", async () => {
+    vi.useFakeTimers();
     const client = createMockClient();
     const shutdown = await startHealthCheck(client, sessionManager);
 
@@ -210,12 +211,11 @@ describe("startHealthCheck", () => {
     });
     expect((client.chat.update as any)).toHaveBeenCalled();
 
-    // clean up timers
-    vi.useFakeTimers();
     await shutdown();
   });
 
   it("reuses existing pin and does not post new message", async () => {
+    vi.useFakeTimers();
     const client = createMockClient({
       pins: {
         list: vi.fn().mockResolvedValue({
@@ -238,7 +238,6 @@ describe("startHealthCheck", () => {
     expect((client.pins.add as any)).not.toHaveBeenCalled();
     expect((client.chat.update as any)).toHaveBeenCalled();
 
-    vi.useFakeTimers();
     await shutdown();
   });
 
@@ -250,8 +249,10 @@ describe("startHealthCheck", () => {
     const shutdown = await startHealthCheck(client, sessionManager);
 
     expect((client.chat.postMessage as any)).not.toHaveBeenCalled();
-    // shutdown should not throw
+    expect((client.chat.update as any)).not.toHaveBeenCalled();
+    // shutdown should not throw or call any API
     await shutdown();
+    expect((client.chat.update as any)).not.toHaveBeenCalled();
   });
 
   it("returns noop function when postMessage fails", async () => {
@@ -265,8 +266,10 @@ describe("startHealthCheck", () => {
     const shutdown = await startHealthCheck(client, sessionManager);
 
     expect((client.pins.add as any)).not.toHaveBeenCalled();
-    // shutdown should not throw
+    expect((client.chat.update as any)).not.toHaveBeenCalled();
+    // shutdown should not throw or call any API
     await shutdown();
+    expect((client.chat.update as any)).not.toHaveBeenCalled();
   });
 
   it("shutdown function calls chat.update with offline status", async () => {

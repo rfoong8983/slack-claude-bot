@@ -37,7 +37,7 @@ export function buildHealthBlocks(sessionManager: SessionManager, online: boolea
       ? lastActiveIso
       : lastActiveIso.replace(" ", "T") + "Z";
     const lastActiveSec = Math.floor(new Date(normalized).getTime() / 1000);
-    lastActivityLine = `*Last activity:* ${slackDate(lastActiveSec, "{date_short_pretty} at {time}", lastActiveIso)}`;
+    lastActivityLine = `*Last activity:* ${slackDate(lastActiveSec, "{date_short_pretty} at {time_secs}", lastActiveIso)}`;
   } else {
     lastActivityLine = "*Last activity:* No sessions yet";
   }
@@ -55,7 +55,7 @@ export function buildHealthBlocks(sessionManager: SessionManager, online: boolea
             `*Status:* ${status}`,
             `*Uptime:* ${uptime}`,
             lastActivityLine,
-            `*Updated:* ${slackDate(now, "{date_short_pretty} at {time}", new Date().toISOString())}`,
+            `*Updated:* ${slackDate(now, "{date_short_pretty} at {time_secs}", new Date().toISOString())}`,
           ].join("\n"),
         },
       },

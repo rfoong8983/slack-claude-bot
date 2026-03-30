@@ -31,14 +31,14 @@ export function createApp(sessionManager: SessionManager): App {
     // Only respond in IM (DM) channels
     if (msg.channel_type !== "im") return;
 
+    // Ignore subtypes (edits, bot messages, message_changed, etc.)
+    if (msg.subtype) return;
+
     // Only respond to the allowed user
     if (msg.user !== config.allowedUserId) {
       console.log(`[msg] ignored message from user=${msg.user} (not allowed)`);
       return;
     }
-
-    // Ignore subtypes (edits, bot messages, etc.)
-    if (msg.subtype) return;
 
     const threadTs = msg.thread_ts ?? msg.ts;
     const channelId = msg.channel;
